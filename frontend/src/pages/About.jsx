@@ -171,7 +171,7 @@ const About = () => {
           <p className="text-gray-600 dark:text-gray-400 mb-8">The creative minds behind GloBlog</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {["Armaan Verma", "Parveen Kumar", "Manjit Kumar Sharma"].map((name, index) => (
+            {["Armaan Verma", "Parveen Kumar", "chat gpt"].map((name, index) => (
               <motion.div
                 key={index}
                 className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg text-center text-xl font-semibold transition duration-300"
