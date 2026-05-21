@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../api.js";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "react-hot-toast";
@@ -25,7 +25,7 @@ const UpdateBlog = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:4001/api/blogs/${id}`);
+        const { data } = await api.get(`/api/blogs/${id}`);
 
         setFormData((prev) => ({
           title: data.title || prev.title,
@@ -69,9 +69,8 @@ const UpdateBlog = () => {
       form.append("about", formData.about);
       form.append("content", formData.content);
 
-      await axios.put(`http://localhost:4001/api/blogs/update/${id}`, form, {
+      await api.put(`/api/blogs/update/${id}`, form, {
         headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
       });
 
       toast.success("Blog updated successfully!");

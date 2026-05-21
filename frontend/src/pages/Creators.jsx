@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../api.js";
 import { motion } from "framer-motion";
 
 const Creators = () => {
@@ -9,7 +9,7 @@ const Creators = () => {
   useEffect(() => {
     const fetchCreators = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4001/api/users/creators");
+        const { data } = await api.get("/api/users/creators");
         setCreators(data);
       } catch (error) {
         console.error("Error fetching creators:", error);

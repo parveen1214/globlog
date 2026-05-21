@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api.js";
 import { useAuth } from "../context/AuthProvider";
 import { toast } from "react-hot-toast";
 
@@ -14,7 +14,7 @@ const CommentSection = ({ blogId }) => {
 
   const fetchComments = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:4001/api/comments/${blogId}`);
+      const { data } = await api.get(`/api/comments/${blogId}`);
       setComments(data);
     } catch (error) {
       console.error("Error fetching comments:", error);
@@ -26,11 +26,7 @@ const CommentSection = ({ blogId }) => {
     if (!newComment.trim()) return;
 
     try {
-      await axios.post(
-        "http://localhost:4001/api/comments/add",
-        { blogId, content: newComment },
-        { withCredentials: true }
-      );
+      await api.post("/api/comments/add", { blogId, content: newComment });
 
       setNewComment("");
       toast.success("Comment added!");
@@ -42,7 +38,7 @@ const CommentSection = ({ blogId }) => {
 
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(`http://localhost:4001/api/comments/${commentId}`, { withCredentials: true });
+      await api.delete(`/api/comments/${commentId}`);
       setComments(comments.filter((comment) => comment._id !== commentId));
       toast.success("Comment deleted!");
     } catch (error) {

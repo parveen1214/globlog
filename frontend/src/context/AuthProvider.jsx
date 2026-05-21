@@ -1,5 +1,5 @@
 
-import axios from 'axios';
+import api, { clearAuthToken } from '../api.js';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Cookies from "js-cookie";
 import toast from 'react-hot-toast';
@@ -12,12 +12,9 @@ export const AuthProvider = ({ children }) => {
     const [blogs, setBlogs] = useState([]);
     const [profile, setProfile] = useState();
 
-    // Check login status on page load and refetch user data on authentication change
     const checkAuth = async () => {
         try {
-            const { data } = await axios.get("http://localhost:4001/api/users/check", {
-                withCredentials: true,
-            });
+            const { data } = await api.get("/api/users/check");
             setUser(data.user);
         } catch (error) {
             setUser(null);
@@ -28,28 +25,23 @@ export const AuthProvider = ({ children }) => {
         checkAuth();
 
         const fetchProfile = async () => {
-
             try {
                 const token = Cookies.get("token");
-                const parsedToken = token?JSON.parse(token):undefined;
-            if(parsedToken){
-                const { data } = await axios.get("http://localhost:4001/api/users/my-profile", {
-                    withCredentials: true,
-                   headers: { "Content-Type": "application/json" },
-               });
-                   console.log(data);
-                   setProfile(data);
-                   //setIsAuthenticated(true);
-            }
+                const parsedToken = token ? JSON.parse(token) : undefined;
+                if (parsedToken) {
+                    const { data } = await api.get("/api/users/my-profile", {
+                        headers: { "Content-Type": "application/json" },
+                    });
+                    setProfile(data);
+                }
             } catch (error) {
-            console.log(error);
-            }};
+                console.log(error);
+            }
+        };
 
         const fetchBlogs = async () => {
             try {
-                const { data } = await axios.get("http://localhost:4001/api/blogs/all-blogs", {
-                    withCredentials: true,
-                });
+                const { data } = await api.get("/api/blogs/all-blogs");
                 setBlogs(data);
             } catch (error) {
                 console.error(error);
@@ -60,10 +52,10 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     let navigate = useNavigate();
-    // Logout function
     const logout = async () => {
         try {
-            await axios.post("http://localhost:4001/api/users/logout", {}, { withCredentials: true });
+            await api.post("/api/users/logout", {});
+            clearAuthToken();
             setUser(null);
             toast.success("Logout successful!");
             navigate("/");

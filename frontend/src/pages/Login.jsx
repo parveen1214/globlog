@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api, { setAuthToken } from "../api.js";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthProvider";
 import { useTheme } from "../context/ThemeProvider";
@@ -19,7 +19,8 @@ const Login = () => {
       return;
     }
     try {
-      const { data } = await axios.post("http://localhost:4001/api/users/login", { email, password }, { withCredentials: true });
+      const { data } = await api.post("/api/users/login", { email, password });
+      if (data.token) setAuthToken(data.token);
       setUser(data.user);
       toast.success("Login successful!");
       navigate("/");

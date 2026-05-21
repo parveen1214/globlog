@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import axios from "axios";
+import api from "../api.js";
 import { AuthContext } from "../context/AuthProvider";
 
 const CreatorPage = () => {
@@ -16,7 +16,7 @@ const CreatorPage = () => {
   useEffect(() => {
     const fetchCreatorData = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:4001/api/users/${creatorId}`);
+        const { data } = await api.get(`/api/users/${creatorId}`);
         setCreator(data);
         setFollowers(data.followers);
         setFollowing(data.following);
@@ -31,7 +31,7 @@ const CreatorPage = () => {
 
     const fetchCreatorBlogs = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:4001/api/blogs/creator-blogs/${creatorId}`);
+        const { data } = await api.get(`/api/blogs/creator-blogs/${creatorId}`);
         setBlogs(data);
       } catch (error) {
         console.error("Error fetching creator's blogs:", error);
@@ -44,7 +44,7 @@ const CreatorPage = () => {
 
   const handleFollowToggle = async () => {
     try {
-      await axios.put(`http://localhost:4001/api/users/follow/${creatorId}`, {}, { withCredentials: true });
+      await api.put(`/api/users/follow/${creatorId}`, {});
 
       if (isFollowing) {
         setFollowers((prev) => prev.filter((f) => f._id !== user._id));

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import axios from "axios";
+import api from "../api.js";
 import { useAuth } from "../context/AuthProvider";
 import { FiEdit, FiX } from "react-icons/fi";
 import { MdDelete } from "react-icons/md";
@@ -23,9 +23,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4001/api/users/my-profile", {
-          withCredentials: true,
-        });
+        const { data } = await api.get("/api/users/my-profile");
 
         setUser(data);
         setEditableUser(data);
@@ -41,9 +39,7 @@ const Dashboard = () => {
 
     const fetchUserBlogs = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4001/api/blogs/my-blog", {
-          withCredentials: true,
-        });
+        const { data } = await api.get("/api/blogs/my-blog");
         setBlogs(data);
       } catch (error) {
         console.error("Error fetching user blogs:", error);
@@ -63,8 +59,7 @@ const Dashboard = () => {
         formData.append("photo", photo);
       }
 
-      const { data } = await axios.put("http://localhost:4001/api/users/update-profile", formData, {
-        withCredentials: true,
+      const { data } = await api.put("/api/users/update-profile", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -80,9 +75,7 @@ const Dashboard = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:4001/api/blogs/delete/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/api/blogs/delete/${id}`);
       setBlogs(blogs.filter(blog => blog._id !== id));
       toast.success("Blog deleted successfully!");
       setIsDeleting(false);

@@ -1,0 +1,70 @@
+name: Deploy Backend to AWS Elastic Beanstalk
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  APPLICATION_NAME: GLOBLOG-BACKEND
+  ENVIRONMENT_NAME: GLOBLOG-BACKEND-env
+  S3_BUCKET: elasticbeanstalk-us-east-1-848973819876
+  VERSION_LABEL: ${{ github.sha }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Install backend dependencies
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm install
+
+      # Create deployment zip (ONLY backend)
+      - name: Create deployment package
+        run: |
+          cd backend
+          zip -r ../deploy.zip . \
+          -x "*.git*" \
+          -x "node_modules/*"
+
+      # Configure AWS credentials
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # Upload deployment package to S3
+      - name: Upload to S3
+        run: |
+          aws s3 cp deploy.zip s3://${{ env.S3_BUCKET }}/deploy-${{ github.sha }}.zip
+
+      # Create new Elastic Beanstalk application version
+      - name: Create Application Version
+        run: |
+          aws elasticbeanstalk create-application-version \
+            --application-name ${{ env.APPLICATION_NAME }} \
+            --version-label ${{ env.VERSION_LABEL }} \
+            --source-bundle S3Bucket="${{ env.S3_BUCKET }}",S3Key="deploy-${{ github.sha }}.zip"
+
+      # Deploy application version to environment
+      - name: Deploy to Elastic Beanstalk
+        run: |
+          aws elasticbeanstalk update-environment \
+            --environment-name ${{ env.ENVIRONMENT_NAME }} \
+            --version-label ${{ env.VERSION_LABEL }}

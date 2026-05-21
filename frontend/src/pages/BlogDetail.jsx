@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import axios from "axios";
+import api from "../api.js";
 import CommentSection from "../components/CommentSection";
 import { useAuth } from "../context/AuthProvider";
 import toast from "react-hot-toast";
@@ -17,7 +17,7 @@ const BlogDetail = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:4001/api/blogs/${id}`);
+        const { data } = await api.get(`/api/blogs/${id}`);
         setBlog(data);
       } catch (error) {
         console.error("Error fetching blog:", error);
@@ -26,7 +26,7 @@ const BlogDetail = () => {
 
     const fetchLatestBlogs = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4001/api/blogs/latest");
+        const { data } = await api.get("/api/blogs/latest");
          // Filter out the current blog
       const filtered = data.filter((b) => b._id !== id);
       setLatestBlogs(filtered);
@@ -51,7 +51,7 @@ const BlogDetail = () => {
     }
 
     try {
-      await axios.put(`http://localhost:4001/api/blogs/like/${id}`, {}, { withCredentials: true });
+      await api.put(`/api/blogs/like/${id}`, {});
 
       setBlog((prev) => ({
         ...prev,

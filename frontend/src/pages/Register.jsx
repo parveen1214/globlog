@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api, { setAuthToken } from "../api.js";
 import toast from "react-hot-toast";
 import { useTheme } from "../context/ThemeProvider";
 
@@ -29,9 +29,10 @@ const Register = () => {
     formData.append("photo", photo);
 
     try {
-      await axios.post("http://localhost:4001/api/users/register", formData, {
+      const { data } = await api.post("/api/users/register", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      if (data.token) setAuthToken(data.token);
       toast.success("Registration successful!");
 
       setName("");

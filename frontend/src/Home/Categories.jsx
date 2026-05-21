@@ -69,7 +69,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
+import api from "../api.js";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const Categories = () => {
@@ -82,7 +82,7 @@ const Categories = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4001/api/blogs/all-blogs");
+        const { data } = await api.get("/api/blogs/all-blogs");
         const uniqueCategories = [...new Set(data.map((blog) => blog.category))];
         setCategories(uniqueCategories);
       } catch (error) {

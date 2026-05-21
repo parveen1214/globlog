@@ -261,7 +261,11 @@ export const login = async (req, res) => {
 // LOGOUT USER
 export const logout = (req, res) => {
     try {
-        res.clearCookie("jwt", { httpOnly: true });
+        res.clearCookie("jwt", {
+            httpOnly: true,
+            secure: process.env.COOKIE_SECURE === "true",
+            sameSite: process.env.COOKIE_SAME_SITE || "lax",
+        });
         res.status(200).json({ message: "User logged out successfully." });
     } catch (error) {
         console.log(error);

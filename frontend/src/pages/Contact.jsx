@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { motion } from "framer-motion";
+import api from "../api.js";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -17,13 +18,7 @@ const Contact = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:4001/api/contact/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
+      const { data } = await api.post("/api/contact/submit", formData);
       if (data.success) {
         toast.success("Message sent successfully!");
         setFormData({ name: "", email: "", message: "" }); // Clear form

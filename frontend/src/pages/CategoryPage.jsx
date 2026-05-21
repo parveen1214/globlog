@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import api from "../api.js";
 import { motion } from "framer-motion";
 
 const CategoryPage = () => {
@@ -10,9 +10,7 @@ const CategoryPage = () => {
   useEffect(() => {
     const fetchBlogsByCategory = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:4001/api/blogs/category/${category}`
-        );
+        const { data } = await api.get(`/api/blogs/category/${category}`);
         setBlogs(data);
       } catch (error) {
         console.error("Error fetching blogs:", error);

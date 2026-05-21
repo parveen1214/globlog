@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api.js";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "react-hot-toast";
@@ -53,9 +53,8 @@ const CreateBlog = () => {
       form.append("about", formData.about);
       form.append("content", formData.content);
 
-      await axios.post("http://localhost:4001/api/blogs/create-blog", form, {
+      await api.post("/api/blogs/create-blog", form, {
           headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
       });
 
       toast.success("Blog created successfully!");

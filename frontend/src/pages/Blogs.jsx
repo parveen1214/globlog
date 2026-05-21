@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../api.js";
 import { motion } from "framer-motion";
 
 const Blogs = () => {
@@ -11,10 +11,9 @@ const Blogs = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const { data } = await axios.get("http://localhost:4001/api/blogs/all-blogs");
+        const { data } = await api.get("/api/blogs/all-blogs");
         setBlogs(data);
 
-        // Extract unique categories
         const uniqueCategories = ["All", ...new Set(data.map((blog) => blog.category))];
         setCategories(uniqueCategories);
       } catch (error) {
@@ -25,7 +24,6 @@ const Blogs = () => {
     fetchBlogs();
   }, []);
 
-  // Filter blogs based on selected category
   const filteredBlogs =
     selectedCategory === "All"
       ? blogs
@@ -33,7 +31,6 @@ const Blogs = () => {
 
   return (
     <div className="container mx-auto px-6 py-10 bg-white dark:bg-gray-900 transition duration-300">
-      {/* Category Filter (Tabs) */}
       <div className="flex space-x-4 mb-6 overflow-x-auto">
         {categories.map((category, index) => (
           <button
@@ -51,7 +48,6 @@ const Blogs = () => {
         ))}
       </div>
 
-      {/* Blog Cards Grid */}
       <motion.div
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         initial={{ opacity: 0, y: 20 }}
@@ -65,14 +61,12 @@ const Blogs = () => {
                 className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-gray-700 rounded-lg overflow-hidden flex flex-col h-[420px] hover:shadow-xl transition duration-300"
                 whileHover={{ scale: 1.03 }}
               >
-                {/* Blog Image with Overlay */}
                 <div className="relative w-full h-56">
                   <img
                     src={blog.blogImage?.url || "https://via.placeholder.com/300"}
                     alt={blog.title}
                     className="w-full h-full object-cover transition duration-300 group-hover:brightness-75"
                   />
-                  {/* Read More Overlay */}
                   <motion.div
                     className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   >
@@ -82,7 +76,6 @@ const Blogs = () => {
                   </motion.div>
                 </div>
 
-                {/* Blog Info */}
                 <div className="p-5 flex flex-col flex-grow">
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                     {blog.title}
